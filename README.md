@@ -10,6 +10,7 @@ There are some unit tests present in the codebase, which should give you some un
 - Add properly sized commits with meaningful commit messages.
 
 The application is available in multiple programming languages. Pick the language you are most comfortable with.
+However, the `Python` language should only be chosen if this specifically fits the job profile that you are applying for.
 
 The assignment can take between 3-8 hours, but you can spend about 2-4 hours on it. It doesn't matter if you don't finish all tasks. If you are short on time focus on the non-optional parts first.
 We will discuss the assignment during the interview.
