@@ -16,7 +16,7 @@ public final class TaskList implements Runnable {
     private final BufferedReader in;
     private final PrintWriter out;
 
-    private long lastId = 0;
+    private long lastAssignedId = 0;
 
     public static void startConsole() {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -64,10 +64,10 @@ public final class TaskList implements Runnable {
                 uncheck(commandRest[1]);
                 break;
             case "help":
-                help();
+                showAllCommands();
                 break;
             default:
-                error(command);
+                handleUnknownInput(command);
                 break;
         }
     }
@@ -94,7 +94,7 @@ public final class TaskList implements Runnable {
     }
 
     private void addProject(String name) {
-        tasks.put(name, new ArrayList<Task>());
+        tasks.put(name, new ArrayList<>());
     }
 
     private void addTask(String project, String description) {
@@ -129,7 +129,7 @@ public final class TaskList implements Runnable {
         out.println();
     }
 
-    private void help() {
+    private void showAllCommands() {
         out.println("Commands:");
         out.println("  show");
         out.println("  add project <project name>");
@@ -139,12 +139,18 @@ public final class TaskList implements Runnable {
         out.println();
     }
 
-    private void error(String command) {
-        out.printf("I don't know what the command \"%s\" is.", command);
+    private void handleUnknownInput(String command) {
+        if (command.isEmpty()) {
+            out.printf("Please enter a command. Type 'help' for available commands.");
+            out.println();
+            return;
+        }
+        out.printf("I don't know what the command \"%s\" is. Please use one of the following commands", command);
         out.println();
+        showAllCommands();
     }
 
     private long nextId() {
-        return ++lastId;
+        return ++lastAssignedId;
     }
 }
