@@ -68,26 +68,38 @@ public class TaskService {
         projectTasks.add(new Task(nextId(), description, false));
     }
 
-    private void check(String idString) {
-        setDone(idString, true);
+    public void check(String[] idString) {
+        setTaskToDone(idString, true);
     }
 
-    private void uncheck(String idString) {
-        setDone(idString, false);
+    public void uncheck(String[] idString) {
+        setTaskToDone(idString, false);
     }
 
-    private void setDone(String idString, boolean done) {
-        int id = Integer.parseInt(idString);
-        for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
-            for (Task task : project.getValue()) {
-                if (task.getId() == id) {
-                    task.setDone(done);
-                    return;
+
+    private void setTaskToDone(String[] idString, boolean isFinished) {
+        if (idString.length < 1) {
+            out.println("Usage: " + (isFinished ? "check <task ID>" : "uncheck <task ID>"));
+            return;
+        }
+
+        String taskID = idString[0];
+
+        if (isValidNumber(taskID)) {
+            int id = Integer.parseInt(taskID);
+
+            for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
+                for (Task task : project.getValue()) {
+                    if (task.getId() == id) {
+                        task.setIsFinished(isFinished);
+                        return;
+                    }
                 }
             }
+            out.printf("Could not find a task with an ID of %d.%n", id);
+            return;
         }
-        out.printf("Could not find a task with an ID of %d.", id);
-        out.println();
+        out.printf("\"%s\" is not a valid task ID.%n", taskID);
     }
 
     private void showAllCommands() {
