@@ -102,19 +102,21 @@ public class TaskService {
         out.printf("\"%s\" is not a valid task ID.%n", taskID);
     }
 
-    private void showAllCommands() {
+    public void showAllCommands() {
         out.println("Commands:");
         out.println("  show");
         out.println("  add project <project name>");
         out.println("  add task <project name> <task description>");
+        out.println("  deadline <task ID> <deadline date>");
+        out.println("  view-by-deadline");
         out.println("  check <task ID>");
         out.println("  uncheck <task ID>");
         out.println();
     }
 
-    private void handleUnknownInput(String command) {
-        if (command.isEmpty()) {
-            out.printf("Please enter a command. Type 'help' for available commands.");
+    public void handleUnknownInput(String command) {
+        if (command.isEmpty() ) {
+            out.print("Please enter a command. Type 'help' for available commands.");
             out.println();
             return;
         }
