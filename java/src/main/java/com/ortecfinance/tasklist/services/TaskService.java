@@ -125,6 +125,25 @@ public class TaskService {
         showAllCommands();
     }
 
+    private boolean isValidNumber(String idString) {
+        try {
+            Integer.parseInt(idString);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        try {
+            LocalDate.parse(dateString, formatter);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private long nextId() {
         return ++lastAssignedId;
     }
