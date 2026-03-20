@@ -147,4 +147,78 @@ public class TaskService {
     private long nextId() {
         return ++lastAssignedId;
     }
+
+
+    public void addDeadline(String[] deadlineArgs) {
+        if (deadlineArgs.length < 2) {
+            out.println("Usage: deadline <task ID> <date>");
+            return;
+        }
+
+        String taskID = deadlineArgs[0];
+        String dateString = deadlineArgs[1];
+
+        if (isValidNumber(taskID)) {
+            int id = Integer.parseInt(taskID);
+
+            if (!isValidDate(dateString)) {
+                out.printf("\"%s\" is not a valid date. Use dd-MM-yyyy.%n", dateString);
+                return;
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate deadline = LocalDate.parse(dateString, formatter);
+
+            for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
+                for (Task task : project.getValue()) {
+                    if (task.getId() == id) {
+                        task.setDeadline(deadline);
+                        return;
+                    }
+                }
+            }
+            out.printf("Could not find a task with an ID of %d.%n", id);
+            return;
+        }
+
+        out.printf("\"%s\" is not a valid task ID.%n", taskID);
+
+    }
+
+    public void viewByDeadline() {
+        List<Task> allTasks = new ArrayList<>();
+        for (List<Task> projectTasks : tasks.values()) {
+            allTasks.addAll(projectTasks);
+        }
+
+        allTasks.sort(Comparator.comparing(
+                Task::getDeadline,
+                Comparator.nullsLast(Comparator.naturalOrder()))
+        );
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        LocalDate currentDeadline = null;
+        boolean inNoDeadlineBlock = false;
+
+        for (Task task : allTasks) {
+            LocalDate deadline = task.getDeadline();
+
+            if (deadline != null) {
+                if (!deadline.equals(currentDeadline)) {
+                    currentDeadline = deadline;
+                    inNoDeadlineBlock = false;
+                    out.println(deadline.format(formatter) + ":");
+                }
+                out.printf("    %d: %s%n", task.getId(), task.getDescription());
+            } else {
+                if (!inNoDeadlineBlock) {
+                    out.println("No deadline:");
+                    inNoDeadlineBlock = true;
+                }
+                out.printf("    %d: %s%n", task.getId(), task.getDescription());
+            }
+        }
+        out.println();
+    }
 }
