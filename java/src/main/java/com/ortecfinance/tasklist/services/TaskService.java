@@ -1,82 +1,24 @@
-package com.ortecfinance.tasklist;
+package com.ortecfinance.tasklist.services;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.ortecfinance.tasklist.Task;
 
-public final class TaskList implements Runnable {
-    private static final String QUIT = "quit";
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+import static java.lang.System.out;
+
+public class TaskService {
 
     private final Map<String, List<Task>> tasks = new LinkedHashMap<>();
-    private final BufferedReader in;
-    private final PrintWriter out;
-
     private long lastAssignedId = 0;
 
-    public static void startConsole() {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out = new PrintWriter(System.out);
-        new TaskList(in, out).run();
-    }
 
-    public TaskList(BufferedReader reader, PrintWriter writer) {
-        this.in = reader;
-        this.out = writer;
-    }
-
-    public void run() {
-        out.println("Welcome to TaskList! Type 'help' for available commands.");
-        while (true) {
-            out.print("> ");
-            out.flush();
-            String command;
-            try {
-                command = in.readLine();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (command.equals(QUIT)) {
-                break;
-            }
-            execute(command);
-        }
-    }
-
-    private void execute(String commandLine) {
-        String[] commandRest = commandLine.split(" ", 2);
-        String command = commandRest[0];
-        switch (command) {
-            case "show":
-                show();
-                break;
-            case "add":
-                add(commandRest[1]);
-                break;
-            case "check":
-                check(commandRest[1]);
-                break;
-            case "uncheck":
-                uncheck(commandRest[1]);
-                break;
-            case "help":
-                showAllCommands();
-                break;
-            default:
-                handleUnknownInput(command);
-                break;
-        }
-    }
-
-    private void show() {
+    public void show() {
         for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
             out.println(project.getKey());
             for (Task task : project.getValue()) {
-                out.printf("    [%c] %d: %s%n", (task.isDone() ? 'x' : ' '), task.getId(), task.getDescription());
+                out.printf("    [%c] %d: %s%n", (task.isFinished() ? 'x' : ' '), task.getId(), task.getDescription());
             }
             out.println();
         }
