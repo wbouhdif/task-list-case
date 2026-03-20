@@ -24,14 +24,33 @@ public class TaskService {
         }
     }
 
-    private void add(String commandLine) {
-        String[] subcommandRest = commandLine.split(" ", 2);
-        String subcommand = subcommandRest[0];
-        if (subcommand.equals("project")) {
-            addProject(subcommandRest[1]);
-        } else if (subcommand.equals("task")) {
-            String[] projectTask = subcommandRest[1].split(" ", 2);
-            addTask(projectTask[0], projectTask[1]);
+    public void add(String[] addArgs) {
+        if (addArgs.length == 0) {
+            handleUnknownInput("add");
+            return;
+        }
+
+        String subcommand = addArgs[0];
+
+        if ("project".equals(subcommand)) {
+            if (addArgs.length < 2) {
+                out.println("Usage: add project <project name>");
+                return;
+            }
+            String projectName = addArgs[1];
+            addProject(projectName);
+
+        } else if ("task".equals(subcommand)) {
+            if (addArgs.length < 3) {
+                out.println("Usage: add task <project name> <task description>");
+                return;
+            }
+            String projectName = addArgs[1];
+            String description = String.join(" ", Arrays.copyOfRange(addArgs, 2, addArgs.length));
+            addTask(projectName, description);
+
+        } else {
+            handleUnknownInput(subcommand);
         }
     }
 
